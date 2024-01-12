@@ -70,8 +70,8 @@ public class TeleOpVeryReal extends OpMode {
         boolean slide_high_pos = gamepad2.dpad_up;
         boolean slide_low_pos = gamepad2.dpad_down;
         if (slide_high_pos) {
-            slide_right.setTargetPosition(10);
-            slide_left.setTargetPosition(10);
+            slide_right.setTargetPosition(50);
+            slide_left.setTargetPosition(50);
         }
         else if (slide_low_pos) {
             slide_right.setTargetPosition(0);
