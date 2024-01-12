@@ -77,6 +77,8 @@ public class TeleOpVeryReal extends OpMode {
             slide_right.setTargetPosition(0);
             slide_left.setTargetPosition(0);
         }
+        telemetry.addData("HighPosition", slide_high_pos);
+        telemetry.addData("LowPosition", slide_low_pos);
         telemetry.addData("SlidePosition", slide_right.getCurrentPosition());
     }
 }
