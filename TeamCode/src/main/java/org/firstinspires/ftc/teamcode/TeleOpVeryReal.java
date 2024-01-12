@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 @TeleOp
 public class TeleOpVeryReal extends OpMode {
@@ -26,7 +27,7 @@ public class TeleOpVeryReal extends OpMode {
     private Servo arm_pivot_2   = null;
     private Servo grip_pivot_1	= null;
     private Servo grip_pivot_2	= null;
-    private Servo grip_spin		= null;
+    private CRServo grip_spin		= null;
 
     @Override
     public void init() {
@@ -38,12 +39,12 @@ public class TeleOpVeryReal extends OpMode {
         back_left	 = hardwareMap.get(DcMotor.class, "BackLeft");
         back_right   = hardwareMap.get(DcMotor.class, "BackRight");
         slide_right  = hardwareMap.get(DcMotor.class, "SlideRight");
-        slide_left  = hardwareMap.get(DcMotor.class, "SlideLeft");
-        arm_pivot_1 = hardwareMap.get(Servo.class, "ArmPivot1");
-        arm_pivot_2 = hardwareMap.get(Servo.class, "ArmPivot2");
-        grip_pivot_1  = hardwareMap.get(Servo.class, "GripPivot1");
-        grip_pivot_2  = hardwareMap.get(Servo.class, "GripPivot2");
-        grip_spin   = hardwareMap.get(Servo.class, "GripSpin");
+        slide_left   = hardwareMap.get(DcMotor.class, "SlideLeft");
+        arm_pivot_1  = hardwareMap.get(Servo.class, "ArmPivot1");
+        arm_pivot_2  = hardwareMap.get(Servo.class, "ArmPivot2");
+        grip_pivot_1 = hardwareMap.get(Servo.class, "GripPivot1");
+        grip_pivot_2 = hardwareMap.get(Servo.class, "GripPivot2");
+        grip_spin    = hardwareMap.get(CRServo.class, "GripSpin");
 
         slide_right.setDirection(DcMotorSimple.Direction.REVERSE);
         slide_left.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -98,7 +99,7 @@ public class TeleOpVeryReal extends OpMode {
             arm_pivot_2.setPosition(0.5);
             grip_pivot_1.setPosition(0.5);
             grip_pivot_2.setPosition(0.5);
-            grip_spin.setPosition(1.0);
+            grip_spin.setPower(1.0);
             telemetry.addLine("Harvest Mode triggered!");
         }
 
@@ -108,7 +109,7 @@ public class TeleOpVeryReal extends OpMode {
             arm_pivot_2.setPosition(0.0);
             grip_pivot_1.setPosition(0.5);
             grip_pivot_2.setPosition(0.5);
-            grip_spin.setPosition(0.5);
+            grip_spin.setPower(0.0);
             telemetry.addLine("Transport Mode triggered!");
         }
 
@@ -118,7 +119,7 @@ public class TeleOpVeryReal extends OpMode {
             arm_pivot_2.setPosition(0.0);
             grip_pivot_1.setPosition(0.5);
             grip_pivot_2.setPosition(0.5);
-            grip_spin.setPosition(0.0);
+            grip_spin.setPower(-1.0);
             telemetry.addLine("Deposit Mode triggered!");
         }
     }
