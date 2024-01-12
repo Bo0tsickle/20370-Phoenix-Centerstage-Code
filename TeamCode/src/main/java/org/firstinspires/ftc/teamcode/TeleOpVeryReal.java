@@ -56,7 +56,6 @@ public class TeleOpVeryReal extends OpMode {
 
     @Override
     public void loop() {
-
         // DRIVE CODE
         double rx = gamepad1.right_stick_x; // Remember, Y stick value is reversed
         double x = gamepad1.left_stick_x; // Counteract imperfect strafing
