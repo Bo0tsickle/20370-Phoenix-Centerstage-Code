@@ -92,31 +92,34 @@ public class TeleOpVeryReal extends OpMode {
         /*
         GRIP CODE
         */
-        // - harvest mode where the grip is down and spinning in (WORKS)
+        // - harvest mode where the grip is down and spinning in
         if (gamepad2.x) {
             arm_pivot_1.setPosition(0.1);
             arm_pivot_2.setPosition(0.5);
             grip_pivot_1.setPosition(0.5);
             grip_pivot_2.setPosition(0.5);
             grip_spin.setPosition(1.0);
+            telemetry.addLine("Harvest Mode triggered!");
         }
 
-        // - transport mode where the grip is up and not spinning (WORKS)
+        // - transport mode where the grip is up and not spinning
         else if (gamepad2.y) {
             arm_pivot_1.setPosition(0.5);
             arm_pivot_2.setPosition(0.0);
             grip_pivot_1.setPosition(0.5);
             grip_pivot_2.setPosition(0.5);
             grip_spin.setPosition(0.5);
+            telemetry.addLine("Transport Mode triggered!");
         }
 
-        // - deposit mode where the grip is backwards and spinning out (WORKS)
+        // - deposit mode where the grip is backwards and spinning out
         else if (gamepad2.b) {
             arm_pivot_1.setPosition(1.0);
             arm_pivot_2.setPosition(0.0);
             grip_pivot_1.setPosition(0.5);
             grip_pivot_2.setPosition(0.5);
             grip_spin.setPosition(0.0);
+            telemetry.addLine("Deposit Mode triggered!");
         }
     }
 }
