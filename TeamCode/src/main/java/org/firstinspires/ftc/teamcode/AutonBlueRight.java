@@ -131,21 +131,21 @@ public class AutonBlueRight extends LinearOpMode {
         boolean middle_detected = false;
         boolean right_detected = false;
         if (sensor_left.getDistance(DistanceUnit.INCH) < 48) {
-            left_detected = true;
-        }
-        else if (sensor_right.getDistance(DistanceUnit.INCH) < 48) {
             middle_detected = true;
         }
-        else {
+        else if (sensor_right.getDistance(DistanceUnit.INCH) < 48) {
             right_detected = true;
+        }
+        else {
+            left_detected = true;
         }
 
         telemetry.addData("LeftDetect", left_detected);
-        telemetry.addData("LeftDistance", sensor_left.getDistance(DistanceUnit.INCH));
-        telemetry.addData("MiddleDetect", left_detected);
-        telemetry.addData("MiddleDistance", sensor_right.getDistance(DistanceUnit.INCH));
-        telemetry.addData("RightDetect", left_detected);
-        telemetry.addData("RightDistance", "No distance sensor attached");
+        telemetry.addData("LeftDistance", "No distance sensor attached");
+        telemetry.addData("MiddleDetect", middle_detected);
+        telemetry.addData("MiddleDistance", sensor_left.getDistance(DistanceUnit.INCH));
+        telemetry.addData("RightDetect", right_detected);
+        telemetry.addData("RightDistance", sensor_right.getDistance(DistanceUnit.INCH));
 
         if (left_detected) {
             drive(27, 27, 27, 27); // forward
