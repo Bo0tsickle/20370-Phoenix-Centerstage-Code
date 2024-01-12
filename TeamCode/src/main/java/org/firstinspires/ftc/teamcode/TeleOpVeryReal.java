@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class TeleOpVeryReal extends OpMode {
@@ -21,6 +22,11 @@ public class TeleOpVeryReal extends OpMode {
     private DcMotor back_right  = null;
     private DcMotor slide_right = null;
     private DcMotor slide_left  = null;
+    private Servo arm_pivot_1   = null;
+    private Servo arm_pivot_2   = null;
+    private Servo grip_pivot_1	= null;
+    private Servo grip_pivot_2	= null;
+    private Servo grip_spin		= null;
 
     @Override
     public void init() {
@@ -33,6 +39,11 @@ public class TeleOpVeryReal extends OpMode {
         back_right   = hardwareMap.get(DcMotor.class, "BackRight");
         slide_right  = hardwareMap.get(DcMotor.class, "SlideRight");
         slide_left  = hardwareMap.get(DcMotor.class, "SlideLeft");
+        arm_pivot_1 = hardwareMap.get(Servo.class, "ArmPivot1");
+        arm_pivot_2 = hardwareMap.get(Servo.class, "ArmPivot2");
+        grip_pivot_1  = hardwareMap.get(Servo.class, "GripPivot1");
+        grip_pivot_2  = hardwareMap.get(Servo.class, "GripPivot2");
+        grip_spin   = hardwareMap.get(Servo.class, "GripSpin");
 
         slide_right.setDirection(DcMotorSimple.Direction.REVERSE);
         slide_left.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -77,8 +88,35 @@ public class TeleOpVeryReal extends OpMode {
             slide_right.setTargetPosition(0);
             slide_left.setTargetPosition(0);
         }
-        telemetry.addData("HighPosition", slide_high_pos);
-        telemetry.addData("LowPosition", slide_low_pos);
-        telemetry.addData("SlidePosition", slide_right.getCurrentPosition());
+
+        /*
+        GRIP CODE
+        */
+        // - harvest mode where the grip is down and spinning in (WORKS)
+        if (gamepad2.x) {
+            arm_pivot_1.setPosition(0.1);
+            arm_pivot_2.setPosition(0.5);
+            grip_pivot_1.setPosition(0.5);
+            grip_pivot_2.setPosition(0.5);
+            grip_spin.setPosition(1.0);
+        }
+
+        // - transport mode where the grip is up and not spinning (WORKS)
+        else if (gamepad2.y) {
+            arm_pivot_1.setPosition(0.5);
+            arm_pivot_2.setPosition(0.0);
+            grip_pivot_1.setPosition(0.5);
+            grip_pivot_2.setPosition(0.5);
+            grip_spin.setPosition(0.5);
+        }
+
+        // - deposit mode where the grip is backwards and spinning out (WORKS)
+        else if (gamepad2.b) {
+            arm_pivot_1.setPosition(1.0);
+            arm_pivot_2.setPosition(0.0);
+            grip_pivot_1.setPosition(0.5);
+            grip_pivot_2.setPosition(0.5);
+            grip_spin.setPosition(0.0);
+        }
     }
 }
