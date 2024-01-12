@@ -121,6 +121,7 @@ public class AutonBlueLeft extends LinearOpMode {
 
         front_right.setDirection(DcMotorSimple.Direction.REVERSE);
         back_right.setDirection(DcMotorSimple.Direction.REVERSE);
+        grip_spin.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -146,20 +147,21 @@ public class AutonBlueLeft extends LinearOpMode {
         telemetry.addData("MiddleDistance", sensor_right.getDistance(DistanceUnit.INCH));
         telemetry.addData("RightDetect", left_detected);
         telemetry.addData("RightDistance", "No distance sensor attached");
+        telemetry.update();
 
         if (left_detected) {
             drive(27, 27, 27, 27); // forward
             drive (22, -22, 22, -22); // turn left
-            grip_spin.setPower(1.0);
+            grip_spin.setPower(-1.0);
         }
         else if (middle_detected) { // works
             drive(30, 30, 30, 30); // forward
-            grip_spin.setPower(1.0);
+            grip_spin.setPower(-1.0);
         }
         else if (right_detected) {
             drive(27, 27, 27, 27); // forward
             drive (-22, 22, -22, 22); // turn right
-            grip_spin.setPower(1.0);
+            grip_spin.setPower(-1.0);
         }
     }
 }

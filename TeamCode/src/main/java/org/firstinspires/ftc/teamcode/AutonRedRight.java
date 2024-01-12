@@ -150,16 +150,16 @@ public class AutonRedRight extends LinearOpMode {
         if (left_detected) {
             drive(27, 27, 27, 27); // forward
             drive (22, -22, 22, -22); // turn left
-            grip_spin.setPower(1.0);
+            grip_spin.setPower(-1.0);
         }
-        else if (middle_detected) { // works
-            drive(30, 30, 30, 30); // forward
-            grip_spin.setPower(1.0);
+        else if (middle_detected) {
+            drive(25, 25, 25, 25); // forward
+            grip_spin.setPower(-1.0);
         }
         else if (right_detected) {
             drive(27, 27, 27, 27); // forward
             drive (-22, 22, -22, 22); // turn right
-            grip_spin.setPower(1.0);
+            grip_spin.setPower(-1.0);
         }
     }
 }
