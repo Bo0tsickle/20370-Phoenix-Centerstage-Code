@@ -140,13 +140,20 @@ public class AutonBlueLeft extends LinearOpMode {
             right_detected = true;
         }
 
+        telemetry.addData("LeftDetect", left_detected);
+        telemetry.addData("LeftDistance", sensor_left.getDistance(DistanceUnit.INCH));
+        telemetry.addData("MiddleDetect", left_detected);
+        telemetry.addData("MiddleDistance", sensor_right.getDistance(DistanceUnit.INCH));
+        telemetry.addData("RightDetect", left_detected);
+        telemetry.addData("RightDistance", "No distance sensor attached");
+
         if (left_detected) {
             drive(27, 27, 27, 27); // forward
             drive (22, -22, 22, -22); // turn left
             grip_spin.setPower(1.0);
         }
         else if (middle_detected) { // works
-            drive(41, 41, 41, 41); // forward
+            drive(30, 30, 30, 30); // forward
             grip_spin.setPower(1.0);
         }
         else if (right_detected) {
