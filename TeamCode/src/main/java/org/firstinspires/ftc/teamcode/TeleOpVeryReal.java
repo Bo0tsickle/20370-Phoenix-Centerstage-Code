@@ -48,6 +48,7 @@ public class TeleOpVeryReal extends OpMode {
 
         slide_right.setDirection(DcMotorSimple.Direction.REVERSE);
         slide_left.setDirection(DcMotorSimple.Direction.REVERSE);
+        grip_spin.setDirection(DcMotorSimple.Direction.FORWARD);
 
         slide_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -100,6 +101,7 @@ public class TeleOpVeryReal extends OpMode {
 //            grip_pivot_1.setPosition(0.5);
 //            grip_pivot_2.setPosition(0.5);
             grip_spin.setPower(1.0);
+            telemetry.addData("GripSpinPower", grip_spin.getPower());
             telemetry.addLine("Harvest Mode triggered!");
         }
 
@@ -110,6 +112,7 @@ public class TeleOpVeryReal extends OpMode {
 //            grip_pivot_1.setPosition(0.5);
 //            grip_pivot_2.setPosition(0.5);
             grip_spin.setPower(0.0);
+            telemetry.addData("GripSpinPower", grip_spin.getPower());
             telemetry.addLine("Transport Mode triggered!");
         }
 
@@ -120,6 +123,7 @@ public class TeleOpVeryReal extends OpMode {
 //            grip_pivot_1.setPosition(0.5);
 //            grip_pivot_2.setPosition(0.5);
             grip_spin.setPower(-1.0);
+            telemetry.addData("GripSpinPower", grip_spin.getPower());
             telemetry.addLine("Deposit Mode triggered!");
         }
     }
