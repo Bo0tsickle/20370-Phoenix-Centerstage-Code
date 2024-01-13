@@ -45,18 +45,18 @@ public class TeleOpVeryReal extends OpMode {
     public void loop() {
 
         // DRIVE CODE
-        double rx = gamepad1.right_stick_x; // Remember, Y stick value is reversed
+        double y = gamepad1.right_stick_x; // Remember, Y stick value is reversed
         double x = gamepad1.left_stick_x; // Counteract imperfect strafing
-        double y = gamepad1.left_stick_y * -1;
+        double rx = gamepad1.left_stick_y * -1;
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio,
         // but only if at least one is out of the range [-1, 1]
-        double denominator = Math.max((Math.abs(rx) + Math.abs(x) + Math.abs(y)), 1);
-        double frontLeftPower = ((rx + x + y) / denominator);
-        double backLeftPower = ((rx - x + y) / denominator);
-        double frontRightPower = ((rx - x - y) / denominator);
-        double backRightPower = ((rx + x - y) / denominator);
+        double denominator = Math.max((Math.abs(y) + Math.abs(x) + Math.abs(rx)), 1);
+        double frontLeftPower = ((y + x + rx) / denominator);
+        double backLeftPower = ((y - x + rx) / denominator);
+        double frontRightPower = ((y - x - rx) / denominator);
+        double backRightPower = ((y + x - rx) / denominator);
 
 
         front_left.setPower(frontLeftPower);
