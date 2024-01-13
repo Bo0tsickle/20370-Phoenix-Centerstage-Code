@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp
 public class TeleOpVeryReal extends OpMode {
@@ -33,23 +34,29 @@ public class TeleOpVeryReal extends OpMode {
         slide_right  = hardwareMap.get(DcMotor.class, "SlideRight");
         slide_left  = hardwareMap.get(DcMotor.class, "SlideLeft");
 
+        slide_right.setDirection(DcMotorSimple.Direction.REVERSE);
+        slide_left.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        slide_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     @Override
     public void loop() {
 
-        double y = gamepad1.right_stick_x; // Remember, Y stick value is reversed
+        // DRIVE CODE
+        double rx = gamepad1.right_stick_x; // Remember, Y stick value is reversed
         double x = gamepad1.left_stick_x; // Counteract imperfect strafing
-        double rx = gamepad1.left_stick_y * -1;
+        double y = gamepad1.left_stick_y * -1;
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio,
         // but only if at least one is out of the range [-1, 1]
-        double denominator = Math.max((Math.abs(y) + Math.abs(x) + Math.abs(rx)), 1);
-        double frontLeftPower = ((y + x + rx) / denominator);
-        double backLeftPower = ((y - x + rx) / denominator);
-        double frontRightPower = ((y - x - rx) / denominator);
-        double backRightPower = ((y + x - rx) / denominator);
+        double denominator = Math.max((Math.abs(rx) + Math.abs(x) + Math.abs(y)), 1);
+        double frontLeftPower = ((rx + x + y) / denominator);
+        double backLeftPower = ((rx - x + y) / denominator);
+        double frontRightPower = ((rx - x - y) / denominator);
+        double backRightPower = ((rx + x - y) / denominator);
 
 
         front_left.setPower(frontLeftPower);
@@ -57,16 +64,18 @@ public class TeleOpVeryReal extends OpMode {
         front_right.setPower(frontRightPower);
         back_right.setPower(backRightPower);
 
-        boolean slide_up = gamepad2.dpad_up;
-        boolean slide_down = gamepad2.dpad_down;
-        if (slide_up == true) {
-            slide_right.setPower(1);
+        /*
+         LINEAR SLIDE CODE
+        */
+        boolean slide_high_pos = gamepad2.dpad_up;
+        boolean slide_low_pos = gamepad2.dpad_down;
+        if (slide_high_pos) {
+            slide_right.setTargetPosition(10);
+            slide_left.setTargetPosition(10);
         }
-        else if (slide_down == true) {
-            slide_right.setPower(-1);
-        }
-        else {
-            slide_right.setPower(0);
+        else if (slide_low_pos) {
+            slide_right.setTargetPosition(0);
+            slide_left.setTargetPosition(0);
         }
     }
 }
