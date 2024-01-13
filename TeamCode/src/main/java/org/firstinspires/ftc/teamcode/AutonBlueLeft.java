@@ -29,17 +29,14 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 
 /*
@@ -59,13 +56,11 @@ import com.qualcomm.robotcore.util.Range;
 
 public class AutonBlueLeft extends LinearOpMode {
     // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
     private DcMotor front_right = null;
     private DcMotor front_left = null;
     private DcMotor back_right = null;
     private DcMotor back_left = null;
-    private DistanceSensor sensor_left = null;
-    private DistanceSensor sensor_right = null;
 
     static final double HD_COUNTS_PER_REV = 28;
     static final double DRIVE_GEAR_REDUCTION = 20.15293;
@@ -94,12 +89,15 @@ public class AutonBlueLeft extends LinearOpMode {
         back_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         back_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        front_right.setPower(0.5);
-        front_left.setPower(0.5);
-        back_right.setPower(0.5);
-        back_left.setPower(0.5);
+        front_right.setPower(0.85);
+        front_left.setPower(0.85);
+        back_right.setPower(0.85);
+        back_left.setPower(0.85);
 
-        while (front_right.isBusy() || front_left.isBusy() || back_right.isBusy() || back_left.isBusy()) {}
+        while (front_right.isBusy() || front_left.isBusy() || back_right.isBusy() || back_left.isBusy()) {
+            telemetry.addLine("Moving!");
+            telemetry.update();
+        }
 
         front_right.setPower(0);
         front_left.setPower(0);
@@ -109,7 +107,6 @@ public class AutonBlueLeft extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -117,8 +114,10 @@ public class AutonBlueLeft extends LinearOpMode {
         front_left = hardwareMap.get(DcMotor.class, "FrontLeft");
         back_right = hardwareMap.get(DcMotor.class, "BackRight");
         back_left = hardwareMap.get(DcMotor.class, "BackLeft");
-        sensor_left = hardwareMap.get(DistanceSensor.class, "DistanceSensorLeft");
-        sensor_right = hardwareMap.get(DistanceSensor.class, "DistanceSensorRight");
+        DistanceSensor sensor_left = hardwareMap.get(DistanceSensor.class, "DistanceSensorLeft");
+        DistanceSensor sensor_right = hardwareMap.get(DistanceSensor.class, "DistanceSensorRight");
+
+        CRServo grip_spin = hardwareMap.get(CRServo.class, "GripSpin");
 
         front_right.setDirection(DcMotorSimple.Direction.REVERSE);
         back_right.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -141,37 +140,20 @@ public class AutonBlueLeft extends LinearOpMode {
             right_detected = true;
         }
 
-        // debug - setting stuff as true
-        left_detected = true;
-        middle_detected = false;
-        right_detected = false;
-
         if (left_detected) {
             drive(27, 27, 27, 27); // forward
             drive (22, -22, 22, -22); // turn left
-            drive(17, 17, 17, 17); // forward
-            // drops pixel here, back and front stage autons diverge here
-            drive(-17, -17, -17, -17); // backward
-            drive(-30, -30, 30, 30); // strafe left
-            drive(20, 20, 20, 20); // forward
+            grip_spin.setPower(1.0);
         }
         else if (middle_detected) { // works
             drive(41, 41, 41, 41); // forward
-            // drops pixel here, back and front stage autons diverge here
-            drive(-40, -40, -40, -40); // backward
-            drive(-24, -24, 24, 24); // strafe left
+            grip_spin.setPower(1.0);
         }
         else if (right_detected) {
             drive(27, 27, 27, 27); // forward
             drive (-22, 22, -22, 22); // turn right
-            drive(17, 17, 17, 17); // forward
-            // drops pixel here, back and front stage autons diverge here
-            drive(-17, -17, -17, -17); // backward
-            drive(30, 30, -30, -30); // strafe right
-            drive(-20, -20, -20, -20); // backward
+            grip_spin.setPower(1.0);
         }
-        // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
     }
 }
 
