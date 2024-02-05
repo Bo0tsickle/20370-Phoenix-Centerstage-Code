@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
 
 @TeleOp
@@ -23,9 +22,10 @@ public class TeleOpVeryReal extends OpMode {
     private DcMotor back_right  = null;
     private DcMotor slide_right = null;
     private DcMotor slide_left  = null;
-    private Servo grip_right	= null;
-    private Servo grip_left	= null;
-    private CRServo grip_spin		= null;
+    private DcMotor arm         = null;
+    private CRServo grip_right	= null;
+    private CRServo grip_left	= null;
+    private CRServo grip_spin   = null;
 
     @Override
     public void init() {
@@ -38,13 +38,12 @@ public class TeleOpVeryReal extends OpMode {
         back_right   = hardwareMap.get(DcMotor.class, "BackRight");
         slide_right  = hardwareMap.get(DcMotor.class, "SlideRight");
         slide_left   = hardwareMap.get(DcMotor.class, "SlideLeft");
-        grip_right = hardwareMap.get(Servo.class, "GripRight");
-        grip_left = hardwareMap.get(Servo.class, "GripLeft");
+        arm          = hardwareMap.get(DcMotor.class, "Arm");
+        grip_right = hardwareMap.get(CRServo.class, "GripRight");
+        grip_left = hardwareMap.get(CRServo.class, "GripLeft");
         grip_spin	= hardwareMap.get(CRServo.class, "GripSpin");
 
         front_left.setDirection(DcMotorSimple.Direction.REVERSE);
-        front_right.setDirection(DcMotorSimple.Direction.REVERSE);
-        back_right.setDirection(DcMotorSimple.Direction.REVERSE);
 
         grip_spin.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -109,10 +108,24 @@ public class TeleOpVeryReal extends OpMode {
 		/*
 		GRIP CODE
 		*/
-        if (gamepad2.x) {
+        arm.setPower(gamepad2.left_stick_y);
+        if (gamepad2.right_stick_y > 0) {
+            grip_left.setPower(1);
+            grip_right.setPower(-1);
+        }
+        else if (gamepad2.right_stick_y < 0) {
+            grip_left.setPower(-1);
+            grip_right.setPower(1);
+        }
+        else {
+            grip_right.setPower(0.0);
+            grip_left.setPower(0.0);
+        }
+
+        if (gamepad2.right_bumper) {
             grip_spin.setPower(1);
         }
-        else if (gamepad2.y) {
+        else if (gamepad2.left_bumper) {
             grip_spin.setPower(-1);
         }
         else {
