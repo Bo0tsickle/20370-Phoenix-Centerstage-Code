@@ -26,6 +26,7 @@ public class TeleOpVeryReal extends OpMode {
     private CRServo grip_right	= null;
     private CRServo grip_left	= null;
     private CRServo grip_spin   = null;
+    private int arm_pos = 0;
 
     @Override
     public void init() {
@@ -70,13 +71,6 @@ public class TeleOpVeryReal extends OpMode {
         double frontRightPower = (y - x - rx) / denominator;
         double backRightPower = (y + x - rx) / denominator;
 
-        telemetry.addData("FrontRightPower", frontRightPower);
-        telemetry.addData("FrontLeftPower", frontLeftPower);
-        telemetry.addData("BackRightPower", backRightPower);
-        telemetry.addData("BackLeftPower", backLeftPower);
-        telemetry.update();
-
-
         front_left.setPower(frontLeftPower);
         back_left.setPower(backLeftPower);
         front_right.setPower(frontRightPower);
@@ -108,28 +102,6 @@ public class TeleOpVeryReal extends OpMode {
 		/*
 		GRIP CODE
 		*/
-        arm.setPower(gamepad2.left_stick_y);
-        if (gamepad2.right_stick_y > 0) {
-            grip_left.setPower(1);
-            grip_right.setPower(-1);
-        }
-        else if (gamepad2.right_stick_y < 0) {
-            grip_left.setPower(-1);
-            grip_right.setPower(1);
-        }
-        else {
-            grip_right.setPower(0.0);
-            grip_left.setPower(0.0);
-        }
 
-        if (gamepad2.right_bumper) {
-            grip_spin.setPower(1);
-        }
-        else if (gamepad2.left_bumper) {
-            grip_spin.setPower(-1);
-        }
-        else {
-            grip_spin.setPower(0);
-        }
     }
 }
