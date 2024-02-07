@@ -26,7 +26,6 @@ public class TeleOpVeryReal extends OpMode {
     private CRServo grip_right	= null;
     private CRServo grip_left	= null;
     private CRServo grip_spin   = null;
-    private int arm_pos = 0;
 
     @Override
     public void init() {
@@ -40,9 +39,9 @@ public class TeleOpVeryReal extends OpMode {
         slide_right  = hardwareMap.get(DcMotor.class, "SlideRight");
         slide_left   = hardwareMap.get(DcMotor.class, "SlideLeft");
         arm          = hardwareMap.get(DcMotor.class, "Arm");
-        grip_right = hardwareMap.get(CRServo.class, "GripRight");
-        grip_left = hardwareMap.get(CRServo.class, "GripLeft");
-        grip_spin	= hardwareMap.get(CRServo.class, "GripSpin");
+        grip_right   = hardwareMap.get(CRServo.class, "GripRight");
+        grip_left    = hardwareMap.get(CRServo.class, "GripLeft");
+        grip_spin	 = hardwareMap.get(CRServo.class, "GripSpin");
 
         front_left.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -102,6 +101,26 @@ public class TeleOpVeryReal extends OpMode {
 		/*
 		GRIP CODE
 		*/
+        double arm_power = gamepad2.left_stick_y;
+        arm.setPower(arm_power);
+        telemetry.addData("arm_power", arm_power);
 
+        if (gamepad2.right_trigger > 0.25) {
+            grip_spin.setPower(1.0);
+        }
+        else if (gamepad2.left_trigger > 0.25) {
+            grip_spin.setPower(-1.0);
+        }
+        else {
+            grip_spin.setPower(0.0);
+        }
+
+        grip_left.setPower(gamepad2.right_stick_y * -1);
+        grip_right.setPower(gamepad2.right_stick_y);
+
+        telemetry.addData("grip_left power", grip_left.getPower());
+        telemetry.addData("grip_right power", grip_right.getPower());
+        telemetry.addData("grip_spin power", grip_spin.getPower());
+        telemetry.update();
     }
 }
