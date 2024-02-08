@@ -117,10 +117,7 @@ public class PurplePixelDrop extends LinearOpMode {
         DistanceSensor sensor_left = hardwareMap.get(DistanceSensor.class, "DistanceSensorLeft");
         DistanceSensor sensor_right = hardwareMap.get(DistanceSensor.class, "DistanceSensorRight");
 
-        CRServo grip_spin = hardwareMap.get(CRServo.class, "GripSpin");
-
         front_right.setDirection(DcMotorSimple.Direction.REVERSE);
-        back_right.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -131,35 +128,32 @@ public class PurplePixelDrop extends LinearOpMode {
         boolean middle_detected = false;
         boolean right_detected = false;
         if (sensor_left.getDistance(DistanceUnit.INCH) < 48) {
-            middle_detected = true;
+            left_detected = true;
         }
         else if (sensor_right.getDistance(DistanceUnit.INCH) < 48) {
             right_detected = true;
         }
         else {
-            left_detected = true;
+            middle_detected = true;
         }
 
         telemetry.addData("LeftDetect", left_detected);
-        telemetry.addData("LeftDistance", "No distance sensor attached");
+        telemetry.addData("LeftDistance", sensor_left.getDistance(DistanceUnit.INCH));
         telemetry.addData("MiddleDetect", middle_detected);
-        telemetry.addData("MiddleDistance", sensor_left.getDistance(DistanceUnit.INCH));
+        telemetry.addData("MiddleDistance", "No distance sensor attached");
         telemetry.addData("RightDetect", right_detected);
         telemetry.addData("RightDistance", sensor_right.getDistance(DistanceUnit.INCH));
 
         if (left_detected) {
             drive(27, 27, 27, 27); // forward
             drive (22, -22, 22, -22); // turn left
-            grip_spin.setPower(1.0);
         }
         else if (middle_detected) { // works
             drive(30, 30, 30, 30); // forward
-            grip_spin.setPower(1.0);
         }
         else if (right_detected) {
             drive(27, 27, 27, 27); // forward
             drive (-22, 22, -22, 22); // turn right
-            grip_spin.setPower(1.0);
         }
     }
 }
