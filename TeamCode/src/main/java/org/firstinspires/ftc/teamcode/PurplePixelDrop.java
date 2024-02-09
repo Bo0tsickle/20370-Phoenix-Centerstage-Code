@@ -89,14 +89,16 @@ public class PurplePixelDrop extends LinearOpMode {
         back_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         back_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        front_right.setPower(0.85);
-        front_left.setPower(0.85);
-        back_right.setPower(0.85);
-        back_left.setPower(0.85);
+        front_right.setPower(0.75);
+        front_left.setPower(0.75);
+        back_right.setPower(0.75);
+        back_left.setPower(0.75);
 
         while (front_right.isBusy() || front_left.isBusy() || back_right.isBusy() || back_left.isBusy()) {
-            telemetry.addLine("Moving!");
-            telemetry.update();
+            telemetry.addData("FrontRight", front_right.getCurrentPosition());
+            telemetry.addData("FrontLeft", front_left.getCurrentPosition());
+            telemetry.addData("BackRight", back_right.getCurrentPosition());
+            telemetry.addData("BackLeft", front_right.getCurrentPosition());
         }
 
         front_right.setPower(0);
@@ -116,6 +118,13 @@ public class PurplePixelDrop extends LinearOpMode {
         back_left = hardwareMap.get(DcMotor.class, "BackLeft");
         DistanceSensor sensor_left = hardwareMap.get(DistanceSensor.class, "DistanceSensorLeft");
         DistanceSensor sensor_right = hardwareMap.get(DistanceSensor.class, "DistanceSensorRight");
+
+        CRServo grip_spin = hardwareMap.get(CRServo.class, "GripSpin");
+
+        front_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        front_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        back_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        back_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         front_right.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -140,21 +149,26 @@ public class PurplePixelDrop extends LinearOpMode {
         telemetry.addData("LeftDetect", left_detected);
         telemetry.addData("LeftDistance", sensor_left.getDistance(DistanceUnit.INCH));
         telemetry.addData("MiddleDetect", middle_detected);
-        telemetry.addData("MiddleDistance", "No distance sensor attached");
+        telemetry.addData("MiddleDistance", "Distance Sensor not attached");
         telemetry.addData("RightDetect", right_detected);
         telemetry.addData("RightDistance", sensor_right.getDistance(DistanceUnit.INCH));
 
         if (left_detected) {
             drive(27, 27, 27, 27); // forward
             drive (22, -22, 22, -22); // turn left
+            grip_spin.setPower(-1.0);
         }
         else if (middle_detected) { // works
             drive(30, 30, 30, 30); // forward
+            grip_spin.setPower(-1.0);
         }
         else if (right_detected) {
             drive(27, 27, 27, 27); // forward
             drive (-22, 22, -22, 22); // turn right
+            grip_spin.setPower(-1.0);
         }
+
+
     }
 }
 
