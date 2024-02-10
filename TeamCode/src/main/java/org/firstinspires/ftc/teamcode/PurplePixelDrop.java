@@ -62,44 +62,21 @@ public class PurplePixelDrop extends LinearOpMode {
     private DcMotor back_right = null;
     private DcMotor back_left = null;
 
+    /*
     static final double HD_COUNTS_PER_REV = 28;
     static final double DRIVE_GEAR_REDUCTION = 20.15293;
     static final double WHEEL_CIRCUMFERENCE_MM = 96 * Math.PI;
     static final double DRIVE_COUNTS_PER_MM = (HD_COUNTS_PER_REV * DRIVE_GEAR_REDUCTION) / WHEEL_CIRCUMFERENCE_MM;
     static final double DRIVE_COUNTS_PER_IN = DRIVE_COUNTS_PER_MM * 25.4;
+    */
 
-    void drive(int front_right_target_IN, int front_left_target_IN, int back_right_target_IN, int back_left_target_IN) {
-        front_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        front_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        back_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        back_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    void drive(int front_left_sign, int front_right_sign, int back_left_sign, int back_right_sign, int wait_time_ms) {
+        front_right.setPower(0.75 * front_right_sign);
+        front_left.setPower(0.75 * front_left_sign);
+        back_right.setPower(0.75 * back_right_sign);
+        back_left.setPower(0.75 * back_left_sign);
 
-        int front_right_target = (int)(front_right_target_IN * DRIVE_COUNTS_PER_IN);
-        int front_left_target = (int)(front_left_target_IN * DRIVE_COUNTS_PER_IN);
-        int back_right_target = (int)(back_right_target_IN * DRIVE_COUNTS_PER_IN);
-        int back_left_target = (int)(back_left_target_IN * DRIVE_COUNTS_PER_IN);
-
-        front_right.setTargetPosition(front_right_target);
-        front_left.setTargetPosition(front_left_target);
-        back_right.setTargetPosition(back_right_target);
-        back_left.setTargetPosition(back_left_target);
-
-        front_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        front_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        back_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        back_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        front_right.setPower(0.75);
-        front_left.setPower(0.75);
-        back_right.setPower(0.75);
-        back_left.setPower(0.75);
-
-        while (front_right.isBusy() || front_left.isBusy() || back_right.isBusy() || back_left.isBusy()) {
-            telemetry.addData("FrontRight", front_right.getCurrentPosition());
-            telemetry.addData("FrontLeft", front_left.getCurrentPosition());
-            telemetry.addData("BackRight", back_right.getCurrentPosition());
-            telemetry.addData("BackLeft", front_right.getCurrentPosition());
-        }
+        sleep(wait_time_ms);
 
         front_right.setPower(0);
         front_left.setPower(0);
@@ -132,7 +109,7 @@ public class PurplePixelDrop extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        // run until the end of the match (driver presses STOP)
+        // sensing
         boolean left_detected = false;
         boolean middle_detected = false;
         boolean right_detected = false;
@@ -153,18 +130,16 @@ public class PurplePixelDrop extends LinearOpMode {
         telemetry.addData("RightDetect", right_detected);
         telemetry.addData("RightDistance", sensor_right.getDistance(DistanceUnit.INCH));
 
+        drive(1, 1, 1, 1, 2000);
         if (left_detected) {
-            drive(27, 27, 27, 27); // forward
-            drive (22, -22, 22, -22); // turn left
+            drive(-1, 1, -1, 1, 1000);
             grip_spin.setPower(-1.0);
         }
         else if (middle_detected) { // works
-            drive(30, 30, 30, 30); // forward
             grip_spin.setPower(-1.0);
         }
         else if (right_detected) {
-            drive(27, 27, 27, 27); // forward
-            drive (-22, 22, -22, 22); // turn right
+            drive(1, -1, 1, -1, 1000);
             grip_spin.setPower(-1.0);
         }
 
