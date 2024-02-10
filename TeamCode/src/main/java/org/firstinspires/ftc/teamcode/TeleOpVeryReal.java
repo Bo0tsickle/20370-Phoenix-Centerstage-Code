@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
 
 @TeleOp
@@ -24,10 +23,9 @@ public class TeleOpVeryReal extends OpMode {
     private DcMotor slide_right = null;
     private DcMotor slide_left  = null;
     private DcMotor arm         = null;
-    private Servo grip_right	= null;
-    private Servo grip_left	= null;
+    private CRServo grip_right	= null;
+    private CRServo grip_left	= null;
     private CRServo grip_spin   = null;
-    private double grip_position = 0.0;
 
     @Override
     public void init() {
@@ -41,16 +39,13 @@ public class TeleOpVeryReal extends OpMode {
         slide_right  = hardwareMap.get(DcMotor.class, "SlideRight");
         slide_left   = hardwareMap.get(DcMotor.class, "SlideLeft");
         arm          = hardwareMap.get(DcMotor.class, "Arm");
-        grip_right   = hardwareMap.get(Servo.class, "GripRight");
-        grip_left    = hardwareMap.get(Servo.class, "GripLeft");
+        grip_right   = hardwareMap.get(CRServo.class, "GripRight");
+        grip_left    = hardwareMap.get(CRServo.class, "GripLeft");
         grip_spin	 = hardwareMap.get(CRServo.class, "GripSpin");
 
         front_left.setDirection(DcMotorSimple.Direction.REVERSE);
 
         grip_spin.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        slide_right.setDirection(DcMotorSimple.Direction.REVERSE);
-        slide_left.setDirection(DcMotorSimple.Direction.REVERSE);
 
         slide_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -80,25 +75,32 @@ public class TeleOpVeryReal extends OpMode {
 		/*
 		 LINEAR SLIDE CODE
 		*/
-        slide_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slide_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //if ((slide_right.getCurrentPosition() > 0) || !(slide_right.getCurrentPosition() < 100)) {
-        slide_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        slide_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         boolean slide_up = gamepad2.dpad_up;
         boolean slide_down = gamepad2.dpad_down;
         if (slide_up) {
-            slide_right.setPower(0.5);
-            slide_left.setPower(0.5);
+            slide_right.setTargetPosition(slide_right.getCurrentPosition() + 100);
+            slide_left.setTargetPosition(slide_left.getCurrentPosition() + 100);
+
+            slide_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            slide_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            slide_right.setPower(1.0);
+            slide_left.setPower(1.0);
         } else if (slide_down) {
-            slide_right.setPower(-0.5);
-            slide_left.setPower(-0.5);
+            slide_right.setTargetPosition(slide_right.getCurrentPosition() - 100);
+            slide_left.setTargetPosition(slide_left.getCurrentPosition() - 100);
+
+            slide_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            slide_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            slide_right.setPower(1.0);
+            slide_left.setPower(1.0);
         }
         else {
             slide_right.setPower(0);
             slide_left.setPower(0);
         }
-        //}
 
 		/*
 		GRIP CODE
@@ -117,18 +119,13 @@ public class TeleOpVeryReal extends OpMode {
             grip_spin.setPower(0.0);
         }
 
-        if (gamepad2.right_stick_y > 0.25) {
-            grip_left.setPosition(grip_position + 0.005);
-            grip_right.setPosition(grip_position - 0.005);
-        }
-        else if (gamepad2.right_stick_y < -0.25) {
-            grip_left.setPosition(grip_position - 0.005);
-            grip_right.setPosition(grip_position + 0.005);
-        }
+        grip_left.setPower(gamepad2.right_stick_y);
+        grip_right.setPower(gamepad2.right_stick_y * -1);
 
-        telemetry.addData("grip_left power", grip_left.getPosition());
-        telemetry.addData("grip_right power", grip_right.getPosition());
+        telemetry.addData("grip_left power", grip_left.getPower());
+        telemetry.addData("grip_right power", grip_right.getPower());
         telemetry.addData("grip_spin power", grip_spin.getPower());
+        telemetry.addData("slide_position", slide_right.getCurrentPosition());
         telemetry.update();
     }
 }
