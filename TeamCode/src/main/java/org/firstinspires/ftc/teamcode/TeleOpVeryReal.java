@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
 
 @TeleOp
@@ -26,6 +27,8 @@ public class TeleOpVeryReal extends OpMode {
     private CRServo grip_right	= null;
     private CRServo grip_left	= null;
     private CRServo grip_spin   = null;
+    private Servo drone_launcher = null;
+
 
     @Override
     public void init() {
@@ -36,16 +39,22 @@ public class TeleOpVeryReal extends OpMode {
         front_right  = hardwareMap.get(DcMotor.class, "FrontRight");
         back_left	 = hardwareMap.get(DcMotor.class, "BackLeft");
         back_right   = hardwareMap.get(DcMotor.class, "BackRight");
+
         slide_right  = hardwareMap.get(DcMotor.class, "SlideRight");
         slide_left   = hardwareMap.get(DcMotor.class, "SlideLeft");
+
         arm          = hardwareMap.get(DcMotor.class, "Arm");
         grip_right   = hardwareMap.get(CRServo.class, "GripRight");
         grip_left    = hardwareMap.get(CRServo.class, "GripLeft");
         grip_spin	 = hardwareMap.get(CRServo.class, "GripSpin");
 
+        drone_launcher = hardwareMap.get(Servo.class, "DroneLauncher");
+
         front_left.setDirection(DcMotorSimple.Direction.REVERSE);
 
         grip_spin.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        grip_right.setDirection(DcMotorSimple.Direction.REVERSE);
 
         slide_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -78,6 +87,12 @@ public class TeleOpVeryReal extends OpMode {
 
         boolean slide_up = gamepad2.dpad_up;
         boolean slide_down = gamepad2.dpad_down;
+        if (slide_right.getCurrentPosition() <= 0) {
+            slide_down = false;
+        }
+        else if (slide_right.getCurrentPosition() >= 5000) {
+            slide_up = false;
+        }
         if (slide_up) {
             slide_right.setTargetPosition(slide_right.getCurrentPosition() + 100);
             slide_left.setTargetPosition(slide_left.getCurrentPosition() + 100);
@@ -85,8 +100,8 @@ public class TeleOpVeryReal extends OpMode {
             slide_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             slide_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            slide_right.setPower(1.0);
-            slide_left.setPower(1.0);
+            slide_right.setPower(0.75);
+            slide_left.setPower(0.75);
         } else if (slide_down) {
             slide_right.setTargetPosition(slide_right.getCurrentPosition() - 100);
             slide_left.setTargetPosition(slide_left.getCurrentPosition() - 100);
@@ -94,12 +109,18 @@ public class TeleOpVeryReal extends OpMode {
             slide_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             slide_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            slide_right.setPower(1.0);
-            slide_left.setPower(1.0);
+            slide_right.setPower(0.75);
+            slide_left.setPower(0.75);
         }
         else {
-            slide_right.setPower(0);
-            slide_left.setPower(0);
+            slide_right.setTargetPosition(slide_right.getCurrentPosition());
+            slide_left.setTargetPosition(slide_left.getCurrentPosition());
+
+            slide_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            slide_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            slide_right.setPower(0.75);
+            slide_left.setPower(0.75);
         }
 
 		/*
@@ -120,7 +141,12 @@ public class TeleOpVeryReal extends OpMode {
         }
 
         grip_left.setPower(gamepad2.right_stick_y);
-        grip_right.setPower(gamepad2.right_stick_y * -1);
+        grip_right.setPower(gamepad2.right_stick_y);
+
+        // drone launcher
+        if (gamepad1.y) {
+            drone_launcher.setPosition(0.5);
+        }
 
         telemetry.addData("grip_left power", grip_left.getPower());
         telemetry.addData("grip_right power", grip_right.getPower());

@@ -61,6 +61,11 @@ public class PurplePixelDrop extends LinearOpMode {
     private DcMotor front_left = null;
     private DcMotor back_right = null;
     private DcMotor back_left = null;
+    private DistanceSensor sensor_left = null;
+    private DistanceSensor sensor_right = null;
+    private CRServo grip_left = null;
+    private CRServo grip_right = null;
+    private CRServo grip_spin = null;
 
     /*
     static final double HD_COUNTS_PER_REV = 28;
@@ -71,12 +76,14 @@ public class PurplePixelDrop extends LinearOpMode {
     */
 
     void drive(int front_left_sign, int front_right_sign, int back_left_sign, int back_right_sign, int wait_time_ms) {
-        front_right.setPower(0.75 * front_right_sign);
-        front_left.setPower(0.75 * front_left_sign);
-        back_right.setPower(0.75 * back_right_sign);
-        back_left.setPower(0.75 * back_left_sign);
+        front_right.setPower(0.25 * front_right_sign);
+        front_left.setPower(0.25 * front_left_sign);
+        back_right.setPower(0.25 * back_right_sign);
+        back_left.setPower(0.25 * back_left_sign);
 
         sleep(wait_time_ms);
+        while (front_right.isBusy() || front_left.isBusy() || back_right.isBusy() || back_left.isBusy()) {
+        }
 
         front_right.setPower(0);
         front_left.setPower(0);
@@ -93,17 +100,18 @@ public class PurplePixelDrop extends LinearOpMode {
         front_left = hardwareMap.get(DcMotor.class, "FrontLeft");
         back_right = hardwareMap.get(DcMotor.class, "BackRight");
         back_left = hardwareMap.get(DcMotor.class, "BackLeft");
-        DistanceSensor sensor_left = hardwareMap.get(DistanceSensor.class, "DistanceSensorLeft");
-        DistanceSensor sensor_right = hardwareMap.get(DistanceSensor.class, "DistanceSensorRight");
 
-        CRServo grip_spin = hardwareMap.get(CRServo.class, "GripSpin");
+        sensor_left = hardwareMap.get(DistanceSensor.class, "DistanceSensorLeft");
+        sensor_right = hardwareMap.get(DistanceSensor.class, "DistanceSensorRight");
 
-        front_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        front_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        back_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        back_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        grip_spin = hardwareMap.get(CRServo.class, "GripSpin");
+        grip_right = hardwareMap.get(CRServo.class, "GripRight");
+        grip_left = hardwareMap.get(CRServo.class, "GripLeft");
 
-        front_right.setDirection(DcMotorSimple.Direction.REVERSE);
+        front_left.setDirection(DcMotorSimple.Direction.REVERSE);
+//        front_right.setDirection(DcMotorSimple.Direction.REVERSE);
+//        back_left.setDirection(DcMotorSimple.Direction.REVERSE);
+//        back_right.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -130,17 +138,31 @@ public class PurplePixelDrop extends LinearOpMode {
         telemetry.addData("RightDetect", right_detected);
         telemetry.addData("RightDistance", sensor_right.getDistance(DistanceUnit.INCH));
 
-        drive(1, 1, 1, 1, 2000);
+        grip_right.setPower(-1.0);
+        grip_left.setPower(1.0);
+        sleep(1250);
+        grip_right.setPower(0.0);
+        grip_left.setPower(0.0);
+
+        drive(1, 1, 1, 1, 2150);
         if (left_detected) {
-            drive(-1, 1, -1, 1, 1000);
-            grip_spin.setPower(-1.0);
+            drive(-1, 1, -1, 1, 2000);
+            drive(-1, -1, -1, -1, 250);
+            grip_spin.setPower(-0.5);
+            sleep(5000);
+            grip_spin.setPower(0.0);
         }
         else if (middle_detected) { // works
-            grip_spin.setPower(-1.0);
+            grip_spin.setPower(-0.5);
+            sleep(5000);
+            grip_spin.setPower(0.0);
         }
         else if (right_detected) {
-            drive(1, -1, 1, -1, 1000);
-            grip_spin.setPower(-1.0);
+            drive(1, -1, 1, -1, 1900);
+            drive(-1, -1, -1, -1, 250);
+            grip_spin.setPower(-0.5);
+            sleep(5000);
+            grip_spin.setPower(0.0);
         }
 
 
