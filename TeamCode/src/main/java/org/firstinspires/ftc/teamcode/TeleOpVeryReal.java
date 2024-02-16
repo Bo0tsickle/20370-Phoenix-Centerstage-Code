@@ -24,9 +24,10 @@ public class TeleOpVeryReal extends OpMode {
     private DcMotor slide_right = null;
     private DcMotor slide_left  = null;
     private DcMotor arm         = null;
-    private CRServo grip_right	= null;
-    private CRServo grip_left	= null;
+    private Servo grip_right	= null;
+    private Servo grip_left	= null;
     private CRServo grip_spin   = null;
+    private double grip_position = 0.0;
 
     @Override
     public void init() {
@@ -40,8 +41,8 @@ public class TeleOpVeryReal extends OpMode {
         slide_right  = hardwareMap.get(DcMotor.class, "SlideRight");
         slide_left   = hardwareMap.get(DcMotor.class, "SlideLeft");
         arm          = hardwareMap.get(DcMotor.class, "Arm");
-        grip_right   = hardwareMap.get(CRServo.class, "GripRight");
-        grip_left    = hardwareMap.get(CRServo.class, "GripLeft");
+        grip_right   = hardwareMap.get(Servo.class, "GripRight");
+        grip_left    = hardwareMap.get(Servo.class, "GripLeft");
         grip_spin	 = hardwareMap.get(CRServo.class, "GripSpin");
 
         front_left.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -102,7 +103,7 @@ public class TeleOpVeryReal extends OpMode {
 		/*
 		GRIP CODE
 		*/
-        double arm_power = gamepad2.left_stick_y / 2.0;
+        double arm_power = gamepad2.left_stick_y;
         arm.setPower(arm_power);
         telemetry.addData("arm_power", arm_power);
 
@@ -116,14 +117,18 @@ public class TeleOpVeryReal extends OpMode {
             grip_spin.setPower(0.0);
         }
 
-        double grip_power = gamepad2.right_stick_y / 2.0;
+        if (gamepad2.right_stick_y > 0.25) {
+            grip_left.setPosition(grip_position + 0.005);
+            grip_right.setPosition(grip_position - 0.005);
+        }
+        else if (gamepad2.right_stick_y < -0.25) {
+            grip_left.setPosition(grip_position - 0.005);
+            grip_right.setPosition(grip_position + 0.005);
+        }
 
-        grip_left.setPower(grip_power);
-        grip_right.setPower(grip_power * -1);
-
-        telemetry.addData("grip_left power", grip_power);
-        telemetry.addData("grip_right position", grip_power * -1);
-        telemetry.addData("grip_spin position", grip_spin.getPower());
+        telemetry.addData("grip_left power", grip_left.getPosition());
+        telemetry.addData("grip_right power", grip_right.getPosition());
+        telemetry.addData("grip_spin power", grip_spin.getPower());
         telemetry.update();
     }
 }
